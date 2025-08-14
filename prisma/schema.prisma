@@ -1,0 +1,65 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int    @id @default(autoincrement())
+  name        String
+  nickName    String
+  collegeName String
+  uniqueKey   String @unique
+
+  @@map("user")
+  Subject Subject[]
+  AttendanceRecord AttendanceRecord[]
+  TimeTable TimeTable[]
+}
+
+model Subject {
+  id                Int                @id @default(autoincrement())
+  name              String
+  createdAt         DateTime
+  description       String?
+  totalLectures     Int
+  targetPercentage  Int                @default(75)
+  userId            Int
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attendanceHistory AttendanceRecord[]
+
+  @@map("subjects")
+}
+
+model AttendanceRecord {
+  id        Int      @id @default(autoincrement())
+  date      DateTime
+  markedAt  DateTime
+  notes     String?
+  subjectId Int
+  userId    Int
+  subject   Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("attendance_records")
+}
+
+model TimeTable {
+  id        Int    @id @default(autoincrement())
+  name      String
+  userId    Int
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  timetable String
+
+  @@map("time_tables")
+}

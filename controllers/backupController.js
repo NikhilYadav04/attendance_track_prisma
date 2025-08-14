@@ -1,4 +1,17 @@
 import prisma from "../config/prisma.js";
+import dotenv from "dotenv";
+import nodemailer from "nodemailer";
+
+//* Nodemailer transporter setup
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: process.env.SMTP_PORT,
+  secure: false,
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+});
 
 export const add_backup = async (req, res) => {
   try {
@@ -148,6 +161,39 @@ export const add_backup = async (req, res) => {
       success: false,
       message: `Error : ${e.message}`,
     });
+  }
+};
+
+export const send_email = async (req, res) => {
+  try {
+    const { email, key } = req.body;
+
+    if (!email || !key) {
+      return res
+        .status(400)
+        .json({ error: "Missing required fields: email or key" });
+    }
+
+    const subject = "Your unique key for attendance record";
+    const html = `
+          <p>This is your unique key for your attendance record.</p>
+          <p>If you lost your data or cleared your app’s data, use this key to recover your data.</p>
+          <p><b>${key}</b></p>
+        `;
+
+    const info = await transporter.sendMail({
+      from: `Class Track`,
+      to: email,
+      subject,
+      text: `Your unique key for attendance record is: ${key}`,
+      html,
+    });
+
+    console.log("Email sent:", info.messageId);
+    res.json({ message: "Email sent successfully" });
+  } catch (error) {
+    console.error("Email sending error:", error);
+    res.status(500).json({ error: "Failed to send email" });
   }
 };
 

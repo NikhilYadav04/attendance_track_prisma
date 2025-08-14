@@ -15,26 +15,26 @@ datasource db {
 }
 
 model User {
-  id          Int    @id @default(autoincrement())
-  name        String
-  nickName    String
-  collegeName String
-  uniqueKey   String @unique
+  id               String             @id @default(uuid())
+  name             String
+  nickName         String
+  collegeName      String
+  uniqueKey        String             @unique
+  Subject          Subject[]
+  AttendanceRecord AttendanceRecord[]
+  TimeTable        TimeTable[]
 
   @@map("user")
-  Subject Subject[]
-  AttendanceRecord AttendanceRecord[]
-  TimeTable TimeTable[]
 }
 
 model Subject {
-  id                Int                @id @default(autoincrement())
+  id                String             @id @default(uuid())
   name              String
   createdAt         DateTime
   description       String?
   totalLectures     Int
   targetPercentage  Int                @default(75)
-  userId            Int
+  userId            String
   user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   attendanceHistory AttendanceRecord[]
 
@@ -42,12 +42,12 @@ model Subject {
 }
 
 model AttendanceRecord {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   date      DateTime
   markedAt  DateTime
   notes     String?
-  subjectId Int
-  userId    Int
+  subjectId String
+  userId    String
   subject   Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -55,9 +55,9 @@ model AttendanceRecord {
 }
 
 model TimeTable {
-  id        Int    @id @default(autoincrement())
+  id        String @id @default(uuid())
   name      String
-  userId    Int
+  userId    String
   user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   timetable String
 

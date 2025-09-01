@@ -1,16 +1,10 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -21,8 +15,9 @@ model User {
   userData          UserData[]
   subjects          Subject[]
   attendanceRecords AttendanceRecord[]
-  TimeTable         TimeTable[]
+  timeTables        TimeTable[]
 
+  @@index([name, uniqueKey])
   @@map("users")
 }
 
@@ -31,8 +26,9 @@ model TimeTable {
   name      String
   userId    Int
   user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  timetable String
+  timetable Json
 
+  @@index([userId])
   @@map("time_tables")
 }
 
@@ -45,13 +41,14 @@ model UserData {
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   subjects    Subject[]
 
+  @@index([userId])
   @@map("user_data")
 }
 
 model Subject {
   id                Int                @id @default(autoincrement())
   name              String
-  createdAt         DateTime
+  createdAt         DateTime           @default(now())
   description       String?
   totalLectures     Int
   targetPercentage  Int                @default(75)
@@ -61,20 +58,22 @@ model Subject {
   user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   attendanceHistory AttendanceRecord[]
 
+  @@index([userId])
   @@map("subjects")
 }
 
 model AttendanceRecord {
-  id        Int      @id @default(autoincrement())
-  date      DateTime
-  markedAt  DateTime
-  isPresent Boolean
+  id            Int      @id @default(autoincrement())
+  date          DateTime
+  markedAt      DateTime @default(now())
+  isPresent     Boolean
   lectureNumber Int
-  notes     String?
-  subjectId Int
-  userId    Int
-  subject   Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  notes         String?
+  subjectId     Int
+  userId        Int
+  subject       Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
   @@map("attendance_records")
 }

@@ -50,6 +50,7 @@ model Subject {
   name              String
   createdAt         DateTime           @default(now())
   description       String?
+  attendedLectures  Int
   totalLectures     Int
   targetPercentage  Int                @default(75)
   userDataId        Int
@@ -65,6 +66,7 @@ model Subject {
 model AttendanceRecord {
   id            Int      @id @default(autoincrement())
   date          DateTime
+  subjectName   String
   markedAt      DateTime @default(now())
   isPresent     Boolean
   lectureNumber Int

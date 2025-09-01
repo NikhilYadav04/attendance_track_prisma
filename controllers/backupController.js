@@ -100,6 +100,7 @@ export const add_backup = async (req, res) => {
             name: s.name.trim(),
             createdAt: s.createdAt ? new Date(s.createdAt) : new Date(),
             description: s.description?.trim() || null,
+            attendedLectures: parseInt(s.attendedLectures),
             totalLectures: parseInt(s.totalLectures),
             targetPercentage: s.targetPercentage
               ? parseInt(s.targetPercentage)
@@ -125,6 +126,7 @@ export const add_backup = async (req, res) => {
           )
           .map((record) => ({
             date: new Date(record.date),
+            subjectName: record.subjectName,
             markedAt: record.markedAt ? new Date(record.markedAt) : new Date(),
             notes: record.notes?.trim() || null,
             isPresent: record.isPresent,

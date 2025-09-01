@@ -10,6 +10,7 @@ export const register = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "Name is required",
+        statusCode: 400,
       });
     }
 
@@ -17,6 +18,7 @@ export const register = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "Nickname is required",
+        statusCode: 400,
       });
     }
 
@@ -24,6 +26,7 @@ export const register = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "College name is required",
+        statusCode: 400,
       });
     }
 
@@ -55,6 +58,7 @@ export const register = async (req, res) => {
       success: true,
       message: "User Created Successfully",
       data: result,
+      statusCode: 201,
     });
   } catch (error) {
     console.error("Registration error:", error);
@@ -63,12 +67,14 @@ export const register = async (req, res) => {
       return res.status(409).json({
         success: false,
         message: "User with this unique key already exists. Please try again.",
+        statusCode: 409,
       });
     }
 
     res.status(500).json({
       message: `Error: ${error.message}`,
       success: false,
+      statusCode: 500,
     });
   }
 };
@@ -81,6 +87,7 @@ export const delete_backup = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "Name is required",
+        statusCode: 400,
       });
     }
 
@@ -88,6 +95,7 @@ export const delete_backup = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "Unique key is required",
+        statusCode: 400,
       });
     }
 
@@ -101,6 +109,7 @@ export const delete_backup = async (req, res) => {
       return res.status(404).json({
         success: false,
         message: "User not found",
+        statusCode: 404,
       });
     }
 
@@ -115,11 +124,13 @@ export const delete_backup = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "User Deleted",
+      statusCode: 200,
     });
   } catch (e) {
     return res.status(500).json({
       success: false,
       message: `Error : ${e.message}`,
+      statusCode: 500,
     });
   }
 };

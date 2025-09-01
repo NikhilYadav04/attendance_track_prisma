@@ -21,6 +21,7 @@ export const add_backup = async (req, res) => {
     //* Enhanced validation
     if (!name?.trim() || !uniqueKey?.trim()) {
       return res.status(400).json({
+        statusCode: 400,
         success: false,
         message: "Name and unique key are required!",
       });
@@ -28,6 +29,7 @@ export const add_backup = async (req, res) => {
 
     if (!Array.isArray(subjects) || subjects.length === 0) {
       return res.status(400).json({
+        statusCode: 400,
         success: false,
         message: "Subjects list cannot be empty!",
       });
@@ -44,6 +46,7 @@ export const add_backup = async (req, res) => {
     if (invalidSubjects.length > 0) {
       return res.status(400).json({
         success: false,
+        statusCode: 400,
         message: "All subjects must have valid name and totalLectures",
       });
     }
@@ -59,6 +62,7 @@ export const add_backup = async (req, res) => {
       return res.status(404).json({
         success: false,
         message: "User not found",
+        statusCode: 404,
       });
     }
 
@@ -71,6 +75,7 @@ export const add_backup = async (req, res) => {
       return res.status(404).json({
         success: false,
         message: "User data not found",
+        statusCode: 404,
       });
     }
 
@@ -144,6 +149,7 @@ export const add_backup = async (req, res) => {
 
     return res.status(200).json({
       success: true,
+      statusCode: 200,
       message: `${result.subjects.length} subjects and ${result.attendanceCount} attendance records replaced successfully`,
       data: {
         subjectsCount: result.subjects.length,
@@ -153,6 +159,7 @@ export const add_backup = async (req, res) => {
   } catch (error) {
     console.error("Backup error:", error);
     res.status(500).json({
+      statusCode: 500,
       message: `Error: ${error.message}`,
       success: false,
     });
@@ -169,6 +176,7 @@ export const get_backup = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "Name and unique key are required",
+        statusCode: 400,
       });
     }
 
@@ -183,6 +191,7 @@ export const get_backup = async (req, res) => {
       return res.status(404).json({
         success: false,
         message: "User not found",
+        statusCode: 404,
       });
     }
 
@@ -207,10 +216,12 @@ export const get_backup = async (req, res) => {
       return res.status(404).json({
         success: false,
         message: "User data not found",
+        statusCode: 404,
       });
     }
 
     return res.status(200).json({
+      statusCode: 200,
       success: true,
       data: {
         userAttendanceData,
@@ -220,6 +231,7 @@ export const get_backup = async (req, res) => {
   } catch (error) {
     console.error("Get backup error:", error);
     res.status(500).json({
+      statusCode: 500,
       message: `Error: ${error.message}`,
       success: false,
     });
@@ -232,9 +244,10 @@ export const send_email = async (req, res) => {
     const { email, key } = req.body;
 
     if (!email || !key) {
-      return res
-        .status(400)
-        .json({ error: "Missing required fields: email or key" });
+      return res.status(400).json({
+        error: "Missing required fields: email or key",
+        statusCode: 400,
+      });
     }
 
     const subject = "Your unique key for attendance record";
@@ -253,10 +266,10 @@ export const send_email = async (req, res) => {
     });
 
     console.log("Email sent:", info.messageId);
-    res.json({ message: "Email sent successfully" });
+    res.json({ message: "Email sent successfully", statusCode: 200 });
   } catch (error) {
     console.error("Email sending error:", error);
-    res.status(500).json({ error: "Failed to send email" });
+    res.status(500).json({ error: "Failed to send email", statusCode: 500 });
   }
 };
 
@@ -270,6 +283,7 @@ export const get_backup_timetable = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "Name and unique key are required",
+        statusCode: 400,
       });
     }
 
@@ -284,6 +298,7 @@ export const get_backup_timetable = async (req, res) => {
       return res.status(404).json({
         success: false,
         message: "No User Found !!",
+        statusCode: 404,
       });
     }
 
@@ -299,17 +314,20 @@ export const get_backup_timetable = async (req, res) => {
       return res.status(404).json({
         success: false,
         message: "No timetable found",
+        statusCode: 404,
       });
     }
 
     return res.status(200).json({
       success: true,
       data: timetable,
+      statusCode: 200,
     });
   } catch (error) {
     console.error("Get timetable error:", error);
     res.status(500).json({
       message: `Error: ${error.message}`,
+      statusCode: 500,
       success: false,
     });
   }

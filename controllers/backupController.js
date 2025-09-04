@@ -243,27 +243,35 @@ export const get_backup = async (req, res) => {
 //* SEND EMAIL
 export const send_email = async (req, res) => {
   try {
-    const { email, key } = req.body;
+    const { email, name, key } = req.body;
 
-    if (!email || !key) {
+    if (!email || !key || !name) {
       return res.status(400).json({
-        error: "Missing required fields: email or key",
+        error: "Missing required fields: name or email or key",
         statusCode: 400,
       });
     }
 
     const subject = "Your unique key for attendance record";
     const html = `
-          <p>This is your unique key for your attendance record.</p>
-          <p>If you lost your data or cleared your app’s data, use this key to recover your data.</p>
-          <p><b>${key}</b></p>
-        `;
+      <p>Hi ${name || "there"},</p>
+
+      <p>This is your unique key for your attendance record.</p>
+      <p>If you lost your data or cleared your app’s data, use this key to recover your data.</p>
+      <p><b>${key}</b></p>
+
+      <p>Best regards,<br/>Class Track Team</p>
+    `;
+
+    const text = `Hi ${
+      name || "there"
+    },\n\nYour unique key for your attendance record is: ${key}\n\nIf you lost your data or cleared your app’s data, use this key to recover your data.\n\nBest regards,\nClass Track Team`;
 
     const info = await transporter.sendMail({
       from: `Class Track`,
       to: email,
       subject,
-      text: `Your unique key for attendance record is: ${key}`,
+      text,
       html,
     });
 
